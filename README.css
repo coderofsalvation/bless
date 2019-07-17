@@ -17,3 +17,8 @@ section > p > img:nth-child(1){
     box-shadow: 5px 5px 5px #CCC7;
     margin-bottom: 20px;
 }
+
+body > div > section > table:nth-child(4) > tbody > tr > td:nth-child(1) > img {
+    min-width:438px;
+    vertical-align:top;
+}

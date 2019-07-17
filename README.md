@@ -134,3 +134,5 @@ bless.wrap( em, 'emit', (original,e,v) => {
 ```
 
 > easy peasy!
+
+<link rel="stylesheet" href="style.css"></link>

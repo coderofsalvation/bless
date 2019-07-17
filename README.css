@@ -1,3 +1,13 @@
 div {
     border:1px solid red;
 }
+
+td{
+    background:transparent;
+}
+
+table th
+header{
+    border:none;
+    background-color:#07F;
+}

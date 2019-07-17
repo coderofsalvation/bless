@@ -1,5 +1,7 @@
 td{
-    background:transparent !important;
+    vertical-align:top;
+    border: 0 !important;
+    background:#F7F7F7 !important;
 }
 
 table th
@@ -20,5 +22,4 @@ section > p > img:nth-child(1){
 
 body > div > section > table:nth-child(4) > tbody > tr > td:nth-child(1) > img {
     min-width:438px;
-    vertical-align:top;
 }

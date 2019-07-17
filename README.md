@@ -28,7 +28,10 @@ bless = function(a){
 var _ = bless // (optional) for underscore & lodash lovers 💗
 ```
 
-> Google Appscript Users: please see the bless.gs snippet below (works without prototype)
+## Install
+
+* node.js / browser: download [bless.js](https://raw.githubusercontent.com/coderofsalvation/bless/master/bless.js)
+* appscript: download [bless.gs](https://raw.githubusercontent.com/coderofsalvation/bless/master/bless.gs)
 
 ## API 👾
 
@@ -97,9 +100,6 @@ a.each( (v,k,next) => console.log(k); next() )
 
 > Byebye zillion ways to write async & sync loops, promises & async/await's
 
-## Install
-
-1. Just copy/paste `minified-all.js` into your project. DONE! 💪
 
 > Optionally you can copy/paste the bless-function above + `minified-mixins.js` (+1k) (below) in your project.
 
@@ -135,4 +135,4 @@ bless.wrap( em, 'emit', (original,e,v) => {
 
 > easy peasy!
 
-<link rel="stylesheet" href="README.css"></link>
+<link rel="stylesheet" href="README.css"/>

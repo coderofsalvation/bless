@@ -21,5 +21,5 @@ section > p > img:nth-child(1){
 }
 
 body > div > section > table:nth-child(4) > tbody > tr > td:nth-child(1) > img {
-    min-width:438px;
+    min-width:500px;
 }

@@ -1,13 +1,19 @@
-div {
-    border:1px solid red;
-}
-
 td{
-    background:transparent;
+    background:transparent !important;
 }
 
 table th
 header{
     border:none;
-    background-color:#07F;
+    background-color:#07F !important;
+}
+
+
+section > p > img:nth-child(1){
+    display: block;
+    margin: 0 auto;
+    border-radius: 6px;
+    border: 1px solid #DDD;
+    box-shadow: 5px 5px 5px #CCC7;
+    margin-bottom: 20px;
 }

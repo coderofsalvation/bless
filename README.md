@@ -6,7 +6,7 @@ Chainable, eventful, rewindable, typesafe, curryable mixins = bless()
 
 | After being blessed  | Before                                                               |
 |-----------------------------------------------|---------------------------------------------|
-| <img src="https://i.imgur.com/qSmOGOr.png" width="85%"/> | ![](https://i.imgur.com/e1efhea.gif) | 
+| <img src="https://i.imgur.com/qSmOGOr.png" width="85%"/> | ![](https://i.imgur.com/e1efhea.gif) |
 
 > (b)less temporary variables, (b)less plumbing, less code 🤯
 
@@ -47,11 +47,12 @@ var _ = bless // (optional) for underscore & lodash lovers 💗
 | myvar.pluck(['foo'])        | bless | returns an object with the specified keys (`{foo:{..}}`) without plumbing |
 | myvar.omit(['foo'])         | bless | returns an object without the specified keys (`{}`) without plumbing |
 | myvar.clone()               | bless | returns a clone of the object |
-| myvar.map( f )              | bless | maps over arrays or object-keys and calls `f(value,key)`| 
+| myvar.map( f )              | bless | maps over arrays or object-keys and calls `f(value,key)`|
 | myvar.push( o )             | bless | pushes element to array (converts o to array if o is object) |
 | myvar.each( (v,k) => .. )   | bless | iterates over arrays or object-keys |
 | myvar.each( (v,k,next) => next() ) | promise | iterates over arrays or object-keys (asynchronous) |
-| myvar.eventemitter()        | bless | adds `.on(event,function)` and `.emit(event,value)` eventbus functionality | 
+| myvar.on(event,func)        | bless | adds eventlistener to event [string]  |
+| myvar.emit(event,data)      | bless | forwards data to all .on(...) eventlisteners |
 | myvar.unbless()             | original var | removes blessings (mixins) |
 
 ## How does it work?
@@ -68,7 +69,7 @@ var x = foo.get('foo.bar.flop.flap',3)  // will not crash on nonexisting key, bu
 ## Custom mixins:
 
 ```
-function execute(a){ 
+function execute(a){
     console.log(a)
     return a
 }
@@ -77,7 +78,7 @@ bless.mixin('execute',execute)          // global mixin
 
 foo.clone()
    .execute()                           // prints {bar:1} to the console
-``` 
+```
 
 > now visit [140bytes](https://aishikaty.github.io/140bytes/) and add your own mixins.
 
@@ -103,7 +104,27 @@ a.each( (v,k,next) => console.log(k); next() )
 
 > Optionally you can copy/paste the bless-function above + `minified-mixins.js` (+1k) (below) in your project.
 
-## Eventable data
+## Write features as mixins
+
+```
+// features
+data.on('doBar:before', console.log )
+data.on('doBar:after',  console.log )
+data.mixin('doBar', function(){
+  Logger.log("doBar")
+}
+
+data
+.doBar(1)
+.doBar(2)
+```
+
+Mixins allow us to write chainable, eventdriven & pluggable features (without the boilerplate).
+
+> NOTE: with (eventdriven) power comes great responsibility
+
+
+## Automagically eventdriven data
 
 Turn data into event-busses like it's nothing.
 Especially for animation-, creative-, hotpluggable- or multitenant-code this prevents headaches & many lines of code:
@@ -111,10 +132,19 @@ Especially for animation-, creative-, hotpluggable- or multitenant-code this pre
 
 var d = {a:1}
 bless(d)
-var em = d.eventemitter()
 var unbind = d.on('foo',() => console.log("foo! ") )
 d.emit('foo',23423234)
 // call unbind() when done
+
+```
+
+adding mixins will automatically add events (which promotes small function and pluggable features/code)
+
+```
+data.mixin('foo',     () => console.log(2) )
+data.on('foo:before', () => console.log(1) )
+data.on('foo:after',  () => console.log(3) )
+data.foo() // outputs 1,2,3
 ```
 
 Wait..how about debouncing certain events as well:

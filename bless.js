@@ -3,10 +3,10 @@
  *
  * USAGE:
  *
- *  
+ *
  * var data = { foo:[{a:1},{a:2}], b:1 }
  * bless(data)
- * 
+ *
  * data.set( 'bar.a.b', [] )
  *     .get( 'foo' )
  *     .each( (v,k) => data.bar.a.b.push(v.a) )
@@ -14,6 +14,8 @@
  *     .map(  (v,k)      => v*=10 )
  *     .each( (v,k)      => console.log(v) )
  *     .clone()
+ *     .on('foo:before', () => console.log('before foo!') )
+ *     .foo
  *     .each( (v,k,next) => {
  *         fetch(`/endpoint?v=${v}`,{method:'POST'})
  *         .then(  (r) => r.json() )
@@ -23,18 +25,31 @@
  *     },{halterror:false})
  *     .then(  ( )  => console.log(`done`) )
  *     .catch( (e)  => console.log(`oops: ${e}`) )
- * 
+ *
+ * data.mixin('foo',     () => console.log(2) )
+ * data.on('foo:before', () => console.log(1) )
+ * data.on('foo:after',  () => console.log(3) )
+ * data.foo() // outputs 1,2,3
+ *
+ * data.on('bar', (i) => console.log(i) )
+ * data.emit('bar',2) // outputs 2
+ *
  */
-
+// bless() - https://gist.github.com/coderofsalvation/61dd5c86b81e4ca6963ed0535bd806e7
 var bless
 bless = function(a){
     // *TODO* fix JSON.stringify(blessedobject) issue
     if( !a || a.unbless ) return a
     a.__proto__ = { __proto__: a.__proto__ }
     var prot = a.__proto__
-    prot.mixin = (fn,f) => prot[fn] = f
+    prot.mixin = (fn,f) => prot[fn] = function(){
+        a.emit(fn+':before',arguments)
+        f.apply(this,arguments)
+        a.emit(fn+':after',arguments)
+    }
     prot.unbless = () => { a.__proto__ = a.__proto__._p; return a; }
     for( var i in bless ) prot[i] = bless[i].bind(a,a)
+    a.eventemitter()
     return a
 }
 
@@ -157,8 +172,8 @@ bless.eventemitter = function(data){
   // credits: https://github.com/ai/nanoevents
   var NanoEvents=function(){this.events={}};NanoEvents.prototype={emit:function(t){var n=[].slice.call(arguments,1);[].slice.call(this.events[t]||[]).filter(function(t){t.apply(null,n)})},on:function(t,n){if("function"!=typeof n)throw new Error("Listener must be a function");return(this.events[t]=this.events[t]||[]).push(n),function(){this.events[t]=this.events[t].filter(function(t){return t!==n})}.bind(this)}};
   var em = new NanoEvents()
-  data.mixin('emit', function(e,v){ em.emit(e,v); return data; } )
-  data.mixin('on',   function(e,f){ return em.on(e,f) } )
+  data.emit = function(e,v){ em.emit(e,v); return data; }
+  data.on   = function(e,f){ em.on(e,f);   return data; }
   return em
 }
 

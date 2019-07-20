@@ -1,7 +1,6 @@
+// bless() https://coderofsalvation.github.io/bless
 //
-// bless() @ http://coderofsalvation.github.io/bless 
-// 
-//         appscript note: call .data() to get the data without the functions (because gs lacks __proto__ mutations)  
+//         appscript note: call .data() to get the data without the functions (because gs lacks __proto__ mutations)
 //
 function bless(o){
   var _ = {}
@@ -9,6 +8,8 @@ function bless(o){
   _.unbless = function(obj){
     for( var i in _ ) delete obj[i]
     delete obj.events
+    delete obj.emit
+    delete obj.on
     return obj
   }
   
@@ -40,7 +41,7 @@ function bless(o){
   }
   
   _.each = function(obj,f){
-    for( var i in obj ){ 
+    for( var i in obj ){
       if( typeof obj[i] != 'function' ) f( obj[i], i )
     }
     return bless( obj || {} )
@@ -64,24 +65,29 @@ function bless(o){
   _.eventemitter = function(o){
     o.events = {}
     o.emit = function(e,val){
-      var evs = o.get('events.'+e)
+      var evs = o.events[e] || []
       evs.map( function(f){ f(val) } )
       return o
     }
     o.on = function(e,f){
-      var evs  = o.get('events.'+e,[])
+      var evs = o.events[e] || []
       evs.push(f)
-      o.set('events.'+e,evs)
+      o.events[e] = evs
       return o
     }
   }
   
   _.mixin = function(o,fn,f){
-    o[fn] = f.bind(o,o)
+    o[fn] = function(){
+      o.emit(fn+':before',arguments)
+      f.apply(o,arguments)
+      o.emit(fn+':after',arguments)
+      return o
+    }
   }
     
   if( o && o.unbless ) return o // already blessed
   for( var i in _ ) o[i] = _[i].bind(o,o)
+  o.eventemitter()
   return o
 }
-

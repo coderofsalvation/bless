@@ -108,9 +108,9 @@ a.each( (v,k,next) => console.log(k); next() )
 
 ```
 // features
-data.on('doBar',         () => console.log(3) )
-data.on('doBar:before',  () => console.log(1) )
-data.mixin('doBar',      () => console.log(2) )
+data.on('doBar',         (a) => console.log(3) ) // eventlistener
+data.on('doBar:before',  (a) => console.log(1) ) // eventlistener
+data.mixin('doBar',      (a) => console.log(2) ) // the actual function
 
 data
 .doBar(1) // outputs 1 2 3

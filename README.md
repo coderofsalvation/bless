@@ -108,15 +108,13 @@ a.each( (v,k,next) => console.log(k); next() )
 
 ```
 // features
-data.on('doBar:before', console.log )
-data.on('doBar:after',  console.log )
-data.mixin('doBar', function(){
-  Logger.log("doBar")
-}
+data.on('doBar',         () => console.log(3) )
+data.on('doBar:before',  () => console.log(1) )
+data.mixin('doBar',      () => console.log(2) )
 
 data
-.doBar(1)
-.doBar(2)
+.doBar(1) // outputs 1 2 3
+.doBar(2) // outputs 1 2 3
 ```
 
 Mixins allow us to write chainable, eventdriven & pluggable features (without the boilerplate).

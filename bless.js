@@ -28,7 +28,7 @@
  *
  * data.mixin('foo',     () => console.log(2) )
  * data.on('foo:before', () => console.log(1) )
- * data.on('foo:after',  () => console.log(3) )
+ * data.on('foo',        () => console.log(3) )
  * data.foo() // outputs 1,2,3
  *
  * data.on('bar', (i) => console.log(i) )
@@ -45,7 +45,7 @@ bless = function(a){
     prot.mixin = (fn,f) => prot[fn] = function(){
         a.emit(fn+':before',arguments)
         f.apply(this,arguments)
-        a.emit(fn+':after',arguments)
+        a.emit(fn,arguments)
     }
     prot.unbless = () => { a.__proto__ = a.__proto__._p; return a; }
     for( var i in bless ) prot[i] = bless[i].bind(a,a)

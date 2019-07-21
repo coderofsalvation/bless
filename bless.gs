@@ -81,7 +81,7 @@ function bless(o){
     o[fn] = function(){
       o.emit(fn+':before',arguments)
       f.apply(o,arguments)
-      o.emit(fn+':after',arguments)
+      o.emit(fn,arguments)
       return o
     }
   }

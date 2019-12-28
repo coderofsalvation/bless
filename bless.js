@@ -46,8 +46,10 @@ bless = function(a){
         a.emit(fn+':before',arguments)
         f.apply(this,arguments)
         a.emit(fn,arguments)
-	return this
+        return a
     }
+    prot.debug = document.location.host.match(/localhost/) != null ? true: false
+    
     prot.unbless = () => { a.__proto__ = a.__proto__._p; return a; }
     for( var i in bless ) prot[i] = bless[i].bind(a,a)
     a.eventemitter()
@@ -172,6 +174,7 @@ bless.rewind = (a) => {
 bless.eventemitter = function(o){
     o.events = {}
     o.emit = function(e,val){
+      if( o.debug ) console.log(`.on('${e}',...)`)
       var evs = o.events[e] || []
       evs.map( function(f){ f(val) } )
       return o
@@ -269,3 +272,5 @@ bless.each = function each(a,cb,opts) {
 
 if( typeof window != "undefined") window.bless = bless
 if( typeof module != "undefined") module.exports = bless
+
+export default bless

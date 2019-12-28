@@ -46,6 +46,7 @@ bless = function(a){
         a.emit(fn+':before',arguments)
         f.apply(this,arguments)
         a.emit(fn,arguments)
+	return this
     }
     prot.unbless = () => { a.__proto__ = a.__proto__._p; return a; }
     for( var i in bless ) prot[i] = bless[i].bind(a,a)
@@ -167,14 +168,20 @@ bless.rewind = (a) => {
     a[i] = a.__proto__._data[i]
   return a
 }
-bless.eventemitter = function(data){
-  data = data || this
-  // credits: https://github.com/ai/nanoevents
-  var NanoEvents=function(){this.events={}};NanoEvents.prototype={emit:function(t){var n=[].slice.call(arguments,1);[].slice.call(this.events[t]||[]).filter(function(t){t.apply(null,n)})},on:function(t,n){if("function"!=typeof n)throw new Error("Listener must be a function");return(this.events[t]=this.events[t]||[]).push(n),function(){this.events[t]=this.events[t].filter(function(t){return t!==n})}.bind(this)}};
-  var em = new NanoEvents()
-  data.emit = function(e,v){ em.emit(e,v); return data; }
-  data.on   = function(e,f){ em.on(e,f);   return data; }
-  return em
+
+bless.eventemitter = function(o){
+    o.events = {}
+    o.emit = function(e,val){
+      var evs = o.events[e] || []
+      evs.map( function(f){ f(val) } )
+      return o
+    }
+    o.on = function(e,f){
+      var evs = o.events[e] || []
+      evs.push(f)
+      o.events[e] = evs
+      return o
+    }
 }
 
 bless.to
